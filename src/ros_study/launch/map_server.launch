@@ -1,0 +1,6 @@
+<launch>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find ros_study)/maps/map_800_obst1.yaml">
+    <param name="frame_id" value="utm"/>
+  </node>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="utm_map_tf" args="500000 5000000 0 0 0 0 1 utm map" />
+</launch>

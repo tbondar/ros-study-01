@@ -1,0 +1,4 @@
+# Costmap 2D
+transform_tolerance: 1.0
+robot_radius: 0.5
+update_frequency: 1.0

@@ -1,0 +1,46 @@
+<launch>
+  <node name="ekf_loc_odom" pkg="robot_localization" type="ekf_localization_node">
+    <param name="world_frame" value="odom"/>
+    <param name="two_d_mode" value="true"/>
+    <param name="frequency" value="10"/>
+    <param name="transform_time_offset" value="0.0"/>
+    <param name="twist0" value="/odom/twist"/>
+    <rosparam param="twist0_config">[ false, false, false,
+                                      false, false, false,
+                                       true,  true, false,
+                                      false, false,  true,
+                                      false, false, false]</rosparam>
+    <param name="imu0" value="/imu/data"/>
+    <rosparam param="imu0_config">[false, false, false,
+                                   false, false,  true,
+                                   false, false, false,
+                                   false, false, false,
+                                   false, false, false]</rosparam>
+    <param name="imu0_differential" value="false"/>
+    <remap from="odometry/filtered" to="odometry/filtered_odom"/>
+  </node>
+  <node name="ekf_loc_map" pkg="robot_localization" type="ekf_localization_node">
+    <param name="world_frame" value="map"/>
+    <param name="two_d_mode" value="true"/>
+    <param name="frequency" value="10"/>
+    <param name="transform_time_offset" value="0.01"/>
+    <param name="odom0" value="/odometry/gps"/>
+    <rosparam param="odom0_config">[ true,  true, false,
+                                    false, false, false,
+                                    false, false, false,
+                                    false, false, false,
+                                    false, false, false]</rosparam>
+    <param name="odom0_differential" value="false"/>
+    <param name="imu0" value="/imu/data"/>
+    <rosparam param="imu0_config">[false, false, false,
+                                   false, false,  true,
+                                   false, false, false,
+                                   false, false, false,
+                                   false, false, false]</rosparam>
+    <param name="imu0_differential" value="false"/>
+  </node>
+  <node name="navsat_transform" pkg="robot_localization" type="navsat_transform_node">
+    <param name="magnetic_declination_radians" value="0"/>
+    <param name="zero_altitude" value="true"/>
+  </node>
+</launch>

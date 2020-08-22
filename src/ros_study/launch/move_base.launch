@@ -1,0 +1,11 @@
+<launch>
+  <node name="move_base" pkg="move_base" type="move_base" clear_params="true" output="screen">
+    <rosparam file="$(find ros_study)/config/common_costmap_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find ros_study)/config/common_costmap_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find ros_study)/config/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find ros_study)/config/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find ros_study)/config/dwa_planner_params.yaml" command="load" />
+    <rosparam file="$(find ros_study)/config/global_planner_params.yaml" command="load" />
+    <remap from="odom" to="odometry/filtered_odom" />
+  </node>
+</launch>

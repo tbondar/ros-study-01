@@ -1,0 +1,8 @@
+planner_frequency: 0.0
+
+base_global_planner: global_planner/GlobalPlanner
+
+GlobalPlanner:
+
+  allow_unknown: false
+  default_tolerance: 2.0

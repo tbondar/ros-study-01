@@ -1,0 +1,40 @@
+controller_frequency: 5.0
+recovery_behavior_enabled: false
+clearing_rotation_allowed: false
+
+TrajectoryPlannerROS:
+
+  acc_lim_x: 0.75
+  acc_lim_y: 0.75
+  acc_lim_theta: 1.57
+  max_vel_x: 1.5
+  min_vel_x: 0.2
+  max_vel_theta: 1.0
+  min_vel_theta: -1.0
+  min_in_place_vel_theta: 0.1
+
+  sim_time: 2.0
+  sim_granularity: 0.25
+  angular_sim_granularity: 0.25
+  path_distance_bias: 0.4
+  goal_distance_bias: 0.8
+  occdist_scale: 0.1
+  meter_scoring: true
+
+  oscillation_reset_dist: 0.5
+  escape_reset_dist: 0.1
+  escape_reset_theta: 1.57
+
+  vx_samples: 20
+  vtheta_samples: 20
+
+  heading_lookahead: 1.0
+  holonomic_robot: false
+  escape_vel: -0.2
+  dwa: true
+  heading_scoring: false
+  heading_scoring_timestep: 0.5
+  simple_attractor: false
+
+  yaw_goal_tolerance: 0.2
+  xy_goal_tolerance: 1.0

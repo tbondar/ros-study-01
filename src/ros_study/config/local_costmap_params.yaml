@@ -1,0 +1,11 @@
+local_costmap:
+  global_frame: utm
+  robot_base_frame: base_link
+
+  plugins:
+    - {name: static_map, type: "costmap_2d::StaticLayer"}
+    - {name: inflation, type: "costmap_2d::InflationLayer"}
+
+  inflation:
+    inflation_radius: 1.0
+    cost_scaling_factor: 0.8

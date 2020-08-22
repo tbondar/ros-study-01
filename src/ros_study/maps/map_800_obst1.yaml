@@ -1,0 +1,6 @@
+image: map_800_obst1.pgm
+resolution: 0.25
+origin: [499900.0, 4999900.0, 0]
+occupied_thresh: 0.65
+free_thresh: 0.2
+negate: 0

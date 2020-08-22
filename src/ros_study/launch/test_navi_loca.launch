@@ -1,0 +1,12 @@
+<launch>
+  <include file="$(find ros_study)/launch/localisation.launch" />
+  <include file="$(find ros_study)/launch/move_base.launch" />
+  <include file="$(find ros_study)/launch/map_server.launch" />
+  <node name="vehicle_emu" pkg="ros_study" type="vehicle_emu.py">
+    <param name="publish_tf" value="false"/>
+    <param name="publish_odom" value="false"/>
+    <remap from="twist" to="odom/twist"/>
+    <remap from="fix" to="gps/fix"/>
+    <remap from="imu" to="imu/data"/>
+  </node>
+</launch>
