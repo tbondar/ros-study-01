@@ -4,7 +4,7 @@ import rospy, tf2_ros, threading, utm
 from math import sqrt, sin, cos, pi
 from numpy import random, rad2deg
 from sensor_msgs.msg import NavSatFix, Imu
-from geometry_msgs.msg import Vector3, Point, PoseStamped
+from geometry_msgs.msg import Point, PoseStamped
 from geometry_msgs.msg import Twist, TwistWithCovarianceStamped, Quaternion
 from geometry_msgs.msg import TransformStamped
 from nav_msgs.msg import Path, Odometry
@@ -134,11 +134,6 @@ def do_imu():
             m.angular_velocity_covariance = COVARIANCE_NO_ESTIMATION
             #m.linear_acceleration = (0, 0, 0)
             m.linear_acceleration_covariance = COVARIANCE_NO_ESTIMATION
-
-            n = Vector3()
-            n.x = rad2deg(orientation) + 90
-            n.y = 0
-            n.z = 0
 
         pub_imu.publish(m)
         rate.sleep()
