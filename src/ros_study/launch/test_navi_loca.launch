@@ -5,6 +5,7 @@
   <node name="vehicle_emu" pkg="ros_study" type="vehicle_emu.py">
     <param name="publish_tf" value="false"/>
     <param name="publish_odom" value="false"/>
+    <param name="gps_err" value="1"/>
     <remap from="twist" to="odom/twist"/>
     <remap from="fix" to="gps/fix"/>
     <remap from="imu" to="imu/data"/>

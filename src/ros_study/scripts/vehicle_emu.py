@@ -12,9 +12,9 @@ from tf.transformations import quaternion_from_euler
 from tf2_ros import TransformBroadcaster, StaticTransformBroadcaster
 
 GPS_ERR_V = [ -5,  -4,  -3,  -2,  -1,   0,   1,   2,   3,   4,   5]
-GPS_ERR_P = [.00, .00, .00, .00, .00, 1.0, .00, .00, .00, .00, .00]
-#GPS_ERR_P = [.00, .00, .02, .03, .05, .80, .05, .03, .02, .00, .00]
-#GPS_ERR_P = [.01, .03, .05, .08, .13, .40, .13, .08, .05, .03, .01]
+GPS_ERR_P = [[.00, .00, .00, .00, .00, 1.0, .00, .00, .00, .00, .00],
+             [.00, .00, .02, .03, .05, .80, .05, .03, .02, .00, .00],
+             [.01, .03, .05, .08, .13, .40, .13, .08, .05, .03, .01]]
 
 COVARIANCE_NO_ESTIMATION = [
     -1.0, 0.0,  0.0,
@@ -81,7 +81,7 @@ def do_fix():
 
     while not rospy.is_shutdown():
 
-        gps_err_x, gps_err_y = random.choice(GPS_ERR_V, p = GPS_ERR_P, size=(2))
+        gps_err_x, gps_err_y = random.choice(GPS_ERR_V, p = GPS_ERR_P[param_gps_err], size=(2))
         gps_err = sqrt(gps_err_x ** 2 + gps_err_y ** 2)
 
         with lock:
@@ -226,6 +226,7 @@ if __name__ == '__main__':
     param_publish_imu = rospy.get_param('~publish_imu', True)
     param_publish_path = rospy.get_param('~publish_path', True)
     param_publish_fix = rospy.get_param('~publish_fix', True)
+    param_gps_err = rospy.get_param('~gps_err', 0)
 
     # Transform broadcaster
     if param_publish_tf:
