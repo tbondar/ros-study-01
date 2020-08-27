@@ -12,9 +12,9 @@ from tf.transformations import quaternion_from_euler
 from tf2_ros import TransformBroadcaster, StaticTransformBroadcaster
 
 GPS_ERR_V = [ -5,  -4,  -3,  -2,  -1,   0,   1,   2,   3,   4,   5]
-#GPS_ERR_P = [.00, .00, .00, .00, .00, 1.0, .00, .00, .00, .00, .00]
+GPS_ERR_P = [.00, .00, .00, .00, .00, 1.0, .00, .00, .00, .00, .00]
 #GPS_ERR_P = [.00, .00, .02, .03, .05, .80, .05, .03, .02, .00, .00]
-GPS_ERR_P = [.01, .03, .05, .08, .13, .40, .13, .08, .05, .03, .01]
+#GPS_ERR_P = [.01, .03, .05, .08, .13, .40, .13, .08, .05, .03, .01]
 
 COVARIANCE_NO_ESTIMATION = [
     -1.0, 0.0,  0.0,
@@ -112,8 +112,10 @@ def do_fix():
             path.poses.append(n)
             path.header.stamp = now
 
-        pub_fix.publish(m)
-        pub_path.publish(path)
+        if publish_fix:
+            pub_fix.publish(m)
+        if publish_path:
+            pub_path.publish(path)
         rate.sleep()
 
 
@@ -135,7 +137,8 @@ def do_imu():
             #m.linear_acceleration = (0, 0, 0)
             m.linear_acceleration_covariance = COVARIANCE_NO_ESTIMATION
 
-        pub_imu.publish(m)
+        if publish_imu:
+            pub_imu.publish(m)
         rate.sleep()
 
 
@@ -195,7 +198,8 @@ def do_odom():
                 tfbr.sendTransform(t)
 
 
-        pub_twist.publish(mt)
+        if publish_twist:
+            pub_twist.publish(mt)
         if publish_odom:
             pub_odom.publish(mo)
 
@@ -218,6 +222,10 @@ if __name__ == '__main__':
     # Get parameters
     publish_tf = rospy.get_param('~publish_tf', True)
     publish_odom = rospy.get_param('~publish_odom', True)
+    publish_twist = rospy.get_param('~publish_twist', True)
+    publish_imu = rospy.get_param('~publish_imu', True)
+    publish_path = rospy.get_param('~publish_path', True)
+    publish_fix = rospy.get_param('~publish_fix', True)
 
     # Transform broadcaster
     if publish_tf:
@@ -230,10 +238,14 @@ if __name__ == '__main__':
 
     # Topics
     rospy.Subscriber('cmd_vel', Twist, cmd_vel_cb)
-    pub_fix = rospy.Publisher('fix', NavSatFix, queue_size=1)
-    pub_path = rospy.Publisher('path', Path, queue_size=1, latch=True)
-    pub_imu = rospy.Publisher('imu', Imu, queue_size=1)
-    pub_twist = rospy.Publisher('twist', TwistWithCovarianceStamped, queue_size=1)
+    if publish_fix:
+        pub_fix = rospy.Publisher('fix', NavSatFix, queue_size=1)
+    if publish_path:
+        pub_path = rospy.Publisher('path', Path, queue_size=1, latch=True)
+    if publish_imu:
+        pub_imu = rospy.Publisher('imu', Imu, queue_size=1)
+    if publish_twist:
+        pub_twist = rospy.Publisher('twist', TwistWithCovarianceStamped, queue_size=1)
     if publish_odom:
         pub_odom = rospy.Publisher('odom', Odometry, queue_size=1)
 

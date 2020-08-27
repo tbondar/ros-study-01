@@ -17,7 +17,7 @@
                                    false, false, false,
                                    false, false, false]</rosparam>
     <param name="imu0_differential" value="false"/>
-    <remap from="odometry/filtered" to="odometry/filtered_odom"/>
+    <remap from="odometry/filtered" to="odom"/>
   </node>
   <node name="ekf_loc_map" pkg="robot_localization" type="ekf_localization_node">
     <param name="world_frame" value="map"/>
