@@ -112,9 +112,9 @@ def do_fix():
             path.poses.append(n)
             path.header.stamp = now
 
-        if publish_fix:
+        if param_publish_fix:
             pub_fix.publish(m)
-        if publish_path:
+        if param_publish_path:
             pub_path.publish(path)
         rate.sleep()
 
@@ -137,7 +137,7 @@ def do_imu():
             #m.linear_acceleration = (0, 0, 0)
             m.linear_acceleration_covariance = COVARIANCE_NO_ESTIMATION
 
-        if publish_imu:
+        if param_publish_imu:
             pub_imu.publish(m)
         rate.sleep()
 
@@ -164,7 +164,7 @@ def do_odom():
                 0.0,  0.0,  0.0, 0.0, 0.0, 0.0,
                 0.0,  0.0,  0.0, 0.0, 0.0, 0.0 ]
 
-            if publish_odom:
+            if param_publish_odom:
                 mo = Odometry()
                 mo.header.stamp = now
                 mo.header.frame_id = odom_frame
@@ -176,7 +176,7 @@ def do_odom():
                 mo.twist.twist.linear.x = v_linear
                 mo.twist.twist.angular.z = v_angular
 
-            if publish_tf:
+            if param_publish_tf:
 
                 t = TransformStamped()
                 t.header.stamp = now
@@ -198,9 +198,9 @@ def do_odom():
                 tfbr.sendTransform(t)
 
 
-        if publish_twist:
+        if param_publish_twist:
             pub_twist.publish(mt)
-        if publish_odom:
+        if param_publish_odom:
             pub_odom.publish(mo)
 
         rate.sleep()
@@ -220,15 +220,15 @@ if __name__ == '__main__':
     rospy.init_node('vehicle_emu')
 
     # Get parameters
-    publish_tf = rospy.get_param('~publish_tf', True)
-    publish_odom = rospy.get_param('~publish_odom', True)
-    publish_twist = rospy.get_param('~publish_twist', True)
-    publish_imu = rospy.get_param('~publish_imu', True)
-    publish_path = rospy.get_param('~publish_path', True)
-    publish_fix = rospy.get_param('~publish_fix', True)
+    param_publish_tf = rospy.get_param('~publish_tf', True)
+    param_publish_odom = rospy.get_param('~publish_odom', True)
+    param_publish_twist = rospy.get_param('~publish_twist', True)
+    param_publish_imu = rospy.get_param('~publish_imu', True)
+    param_publish_path = rospy.get_param('~publish_path', True)
+    param_publish_fix = rospy.get_param('~publish_fix', True)
 
     # Transform broadcaster
-    if publish_tf:
+    if param_publish_tf:
         tfbr = TransformBroadcaster()
 
     # Path
@@ -238,15 +238,15 @@ if __name__ == '__main__':
 
     # Topics
     rospy.Subscriber('cmd_vel', Twist, cmd_vel_cb)
-    if publish_fix:
+    if param_publish_fix:
         pub_fix = rospy.Publisher('fix', NavSatFix, queue_size=1)
-    if publish_path:
+    if param_publish_path:
         pub_path = rospy.Publisher('path', Path, queue_size=1, latch=True)
-    if publish_imu:
+    if param_publish_imu:
         pub_imu = rospy.Publisher('imu', Imu, queue_size=1)
-    if publish_twist:
+    if param_publish_twist:
         pub_twist = rospy.Publisher('twist', TwistWithCovarianceStamped, queue_size=1)
-    if publish_odom:
+    if param_publish_odom:
         pub_odom = rospy.Publisher('odom', Odometry, queue_size=1)
 
     # Threads
