@@ -5,11 +5,12 @@ This repository contains the setup for studying localisation and navigation with
 
 ## Components
 
-It uses the [navigation stack](wiki.ros.org/navigation) and the [`robot_localization`](http://wiki.ros.org/robot_localization) package. The robot is emulated by a simple vehicle emulator.
+It uses the [navigation stack](http://wiki.ros.org/navigation) and the [`robot_localization`](http://wiki.ros.org/robot_localization) package. The robot is emulated by a simple vehicle emulator.
 
 ### Vehicle Emulator
 
 A simple emulator with GPS, compass and odometry.
+It uses simple kinematics to calculate the vehicle's pose based on the velocity commands received at `/cmd_vel`.
 
 #### Subscribed Topics
 
@@ -55,7 +56,7 @@ $ source /opt/ros/melodic/setup.bash
 $ source .../ros-study-01/devel/setup.bash
 ```
 
-Use `rviz` to visualise robot motion and setting navigation goals.
+Use `rviz` to visualise robot motion and set navigation goals.
 ```
 $ rosrun rviz rviz --display-config ros_study.rviz
 ```
@@ -66,23 +67,38 @@ $ rosrun rqt_reconfigure rqt_reconfigure
 ```
 
 ### Localisation only
+
 ```
 $ roslaunch ros_study test_loca.launch
 ```
+In this mode only the vehicle emulator and the localisation nodes are enabled.
+The configuration is based on [this tutorial](http://docs.ros.org/melodic/api/robot_localization/html/integrating_gps.html).
+It can be used to test how the `robot_localization` nodes fuse inaccurate sensor data.
+
+<p align="center">
+  <img src="docs/nodes_test_loca_01.png">
+</p>
 
 ### Navigation only
 ```
 $ roslaunch ros_study test_navi.launch
 ```
+In this mode only the vehicle emulator and the navigation nodes are enabled.
+It can be used to test navigation algorithms assuming that the localisation of the vehicle is perfect.
+Navigation goals can be set using `rviz`.
+
+<p align="center">
+  <img src="docs/nodes_test_navi_01.png">
+</p>
 
 ### Localisation and Navigation
 ```
 $ roslaunch ros_study test_navi_loca.launch
 ```
-
-
-## Node Graph
+In this mode the vehicle emulator and both the navigation and localisation nodes are enables.
+This mode emulates the real life scenario when sensor fusion and navigation algorithms have to work together.
+Navigation goals can be set using `rviz`.
 
 <p align="center">
-  <img src="docs/rqt_graph_01.png">
+  <img src="docs/nodes_test_navi_loca_01.png">
 </p>
