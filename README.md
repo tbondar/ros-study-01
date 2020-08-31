@@ -102,3 +102,25 @@ Navigation goals can be set using `rviz`.
 <p align="center">
   <img src="docs/nodes_test_navi_loca_01.png">
 </p>
+
+---
+
+## UPDATE: Changed Navigation Parameters
+
+### Usage:
+To run the Localization and Navigation, simply launch the test_navi_loca.launch
+```
+$ roslaunch ros_study test_navi_loca.launch
+```
+This will load the updated navigation parameters.<br>
+Also to visualize it in RViz, you can simply launch the below launch file which will preload all the parameters
+```
+$ roslaunch ros_study rviz.launch
+```
+### Fine Tuning:
+To fine tune the navigation stack, you can open<br>
+[dwa_plannar_params.yaml](/config/dwa_plannar_params.yaml) from the config folder<br>
+and tune parameters like:
+* xy_goal_tolerance (in meters)
+* yaw_goal_tolerance (in radian)
+etc.
