@@ -1,4 +1,10 @@
 # Costmap 2D
-transform_tolerance: 1.0
+
+obstacle_range: 3.0
+raytrace_range: 3.5
+
+footprint: [[-0.5, -0.4375], [-0.5, 0.4375], [0.5, 0.4375], [0.5, -0.4375]]
 robot_radius: 0.5
-update_frequency: 1.0
+
+inflation_radius: 1.0
+cost_scaling_factor: 3.0

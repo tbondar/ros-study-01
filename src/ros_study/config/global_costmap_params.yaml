@@ -2,10 +2,8 @@ global_costmap:
   global_frame: utm
   robot_base_frame: base_link
 
-  plugins:
-    - {name: static_map, type: "costmap_2d::StaticLayer"}
-    - {name: inflation, type: "costmap_2d::InflationLayer"}
+  update_frequency: 10.0
+  publish_frequency: 10.0
+  transform_tolerance: 0.5
 
-  inflation:
-    inflation_radius: 4.0
-    cost_scaling_factor: 1.5
+  static_map: true
