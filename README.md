@@ -119,7 +119,7 @@ $ roslaunch ros_study rviz.launch
 ```
 ### Fine Tuning:
 To fine tune the navigation stack, you can open<br>
-[dwa_plannar_params.yaml](/config/dwa_plannar_params.yaml) from the config folder<br>
+[dwa_plannar_params.yaml](https://github.com/tbondar/ros-study-01/blob/nav/src/ros_study/config/dwa_planner_params.yaml) from the config folder<br>
 and tune parameters like:
 * xy_goal_tolerance (in meters)
 * yaw_goal_tolerance (in radian)
