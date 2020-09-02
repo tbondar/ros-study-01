@@ -30,10 +30,15 @@ COVARIANCE_ORIENTATION_DEFAULT = [
 def cmd_vel_cb(twist):
 
     global v_left, v_right
+    global v_left_eff, v_right_eff
 
     with lock:
+        # Nominal track speed
         v_left = twist.linear.x - twist.angular.z * param_wheel_distance
         v_right = twist.linear.x + twist.angular.z * param_wheel_distance
+        # Effective track speed
+        v_left_eff = v_left * (1.0 + param_odom_left_err)
+        v_right_eff = v_right * (1.0 + param_odom_right_err)
 
 def update():
 
@@ -53,13 +58,18 @@ def update():
                 # Calculate elapsed time
                 dt = t - t0
 
+                # Nominal velocity
                 v_linear = (v_left + v_right) / 2.0
                 v_angular = (v_right - v_left) / param_wheel_distance / 2.0
 
+                # Effective velocity
+                v_lin_eff = (v_left_eff + v_right_eff) / 2.0
+                v_ang_eff = (v_right_eff - v_left_eff) / param_wheel_distance / 2.0
+
                 # Calculate movement
-                pos_x += v_linear * dt * cos(orientation)
-                pos_y += v_linear * dt * sin(orientation)
-                orientation += v_angular * dt
+                pos_x += v_lin_eff * dt * cos(orientation)
+                pos_y += v_lin_eff * dt * sin(orientation)
+                orientation += v_ang_eff * dt
 
                 # Limit rotation
                 if orientation > pi:
@@ -214,6 +224,7 @@ if __name__ == '__main__':
     pos_x0, pos_y0 = 500000.0, 5000000.0
     pos_x, pos_y, orientation = pos_x0, pos_y0, 0.0
     v_left, v_right = 0.0, 0.0
+    v_left_eff, v_right_eff = 0.0, 0.0
     v_linear, v_angular = 0.0, 0.0
 
     map_frame = 'map'
@@ -230,6 +241,8 @@ if __name__ == '__main__':
     param_publish_path = rospy.get_param('~publish_path', True)
     param_publish_fix = rospy.get_param('~publish_fix', True)
     param_gps_err = rospy.get_param('~gps_err', 0)
+    param_odom_left_err = rospy.get_param('~odom_left_err', 0.0)
+    param_odom_right_err = rospy.get_param('~odom_right_err', 0.0)
     param_wheel_distance = rospy.get_param('~wheel_distance', 1.0)
 
     # Transform broadcaster

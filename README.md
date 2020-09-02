@@ -45,7 +45,18 @@ It uses simple kinematics to calculate the vehicle's pose based on the velocity 
 * `~publish_fix`
   Whether to publish `sensor_msgs/NavSatFix` messages
 * `~gps_err`
-  Simulated GPS error: _0_ = no error, _1_ = small error, _2_ = larger error
+  Emulated GPS error: _0_ = no error, _1_ = small error, _2_ = larger error
+* `~odom_left_err`
+  Emulated error of left wheel speed (default is _0.0_)
+* `~odom_right_err`
+  Emulated error of right wheel speed (default is _0.0_)
+
+The odometry error parameters change the effective velocity that is used to calculate the vehicle's position and orientation:
+```
+v_left_eff = v_left * (1.0 + param_odom_left_err)
+v_right_eff = v_right * (1.0 + param_odom_right_err)
+```
+where `v_left` and `v_right` are the nominal wheel speeds calculated from the `/cmd_vel` topic.
 
 
 ## Usage
