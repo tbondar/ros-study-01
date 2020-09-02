@@ -29,12 +29,11 @@ COVARIANCE_ORIENTATION_DEFAULT = [
 
 def cmd_vel_cb(twist):
 
-    global v_linear, v_angular
+    global v_left, v_right
 
     with lock:
-        v_linear = twist.linear.x
-        v_angular = twist.angular.z
-
+        v_left = twist.linear.x - twist.angular.z * param_wheel_distance
+        v_right = twist.linear.x + twist.angular.z * param_wheel_distance
 
 def update():
 
@@ -53,6 +52,9 @@ def update():
             try:
                 # Calculate elapsed time
                 dt = t - t0
+
+                v_linear = (v_left + v_right) / 2.0
+                v_angular = (v_right - v_left) / param_wheel_distance / 2.0
 
                 # Calculate movement
                 pos_x += v_linear * dt * cos(orientation)
@@ -211,6 +213,7 @@ if __name__ == '__main__':
     # Starting position
     pos_x0, pos_y0 = 500000.0, 5000000.0
     pos_x, pos_y, orientation = pos_x0, pos_y0, 0.0
+    v_left, v_right = 0.0, 0.0
     v_linear, v_angular = 0.0, 0.0
 
     map_frame = 'map'
@@ -227,6 +230,7 @@ if __name__ == '__main__':
     param_publish_path = rospy.get_param('~publish_path', True)
     param_publish_fix = rospy.get_param('~publish_fix', True)
     param_gps_err = rospy.get_param('~gps_err', 0)
+    param_wheel_distance = rospy.get_param('~wheel_distance', 1.0)
 
     # Transform broadcaster
     if param_publish_tf:
