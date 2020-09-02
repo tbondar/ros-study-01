@@ -1,11 +1,20 @@
 local_costmap:
-  global_frame: utm
+  global_frame: odom
   robot_base_frame: base_link
 
   plugins:
-    - {name: static_map, type: "costmap_2d::StaticLayer"}
+    - {name: obstacles, type: "costmap_2d::ObstacleLayer"}
     - {name: inflation, type: "costmap_2d::InflationLayer"}
 
+  obstacles:
+    footprint_clearing_enabled: true
+    max_obstacle_height: 1.0
+
   inflation:
-    inflation_radius: 1.0
-    cost_scaling_factor: 0.8
+    inflation_radius: 2.0
+    cost_scaling_factor: 10
+
+  rolling_window: true
+  width: 10
+  height: 10
+  resolution: 0.25
