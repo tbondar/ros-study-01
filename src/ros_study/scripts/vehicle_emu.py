@@ -27,22 +27,34 @@ COVARIANCE_ORIENTATION_DEFAULT = [
     0.0,  0.0,  0.0 ]
 
 
+def add_max(v_target, v_current, dv_max):
+
+    dv = v_target - v_current
+
+    if abs(dv) > dv_max:
+        if dv > 0:
+            v_new = v_current + dv_max
+        else:
+            v_new = v_current - dv_max
+    else:
+        v_new = v_target
+
+    return v_new
+
+
 def cmd_vel_cb(twist):
 
-    global v_left, v_right
-    global v_left_eff, v_right_eff
+    global v_linear_target, v_angular_target
 
     with lock:
-        # Nominal track speed
-        v_left = twist.linear.x - twist.angular.z * param_wheel_distance
-        v_right = twist.linear.x + twist.angular.z * param_wheel_distance
-        # Effective track speed
-        v_left_eff = v_left * (1.0 + param_odom_left_err)
-        v_right_eff = v_right * (1.0 + param_odom_right_err)
+        # Target speed
+        v_linear_target = twist.linear.x
+        v_angular_target = twist.angular.z
 
 def update():
 
-    global pos_x, pos_y, orientation, v_linear, v_angular
+    global pos_x, pos_y, orientation
+    global v_linear_current, v_angular_current
 
     rate = rospy.Rate(20)
     t0 = None
@@ -55,21 +67,29 @@ def update():
             t = rospy.Time.now().to_sec()
 
             try:
-                # Calculate elapsed time
+                # Elapsed time
                 dt = t - t0
 
-                # Nominal velocity
-                v_linear = (v_left + v_right) / 2.0
-                v_angular = (v_right - v_left) / param_wheel_distance / 2.0
+                # Limit velocity change
+                v_linear_current = add_max(v_linear_target, v_linear_current, param_max_acc_linear * dt)
+                v_angular_current = add_max(v_angular_target, v_angular_current, param_max_acc_angular * dt)
+
+                # Current track speed
+                ul = v_linear_current - v_angular_current * param_wheel_distance
+                ur = v_linear_current + v_angular_current * param_wheel_distance
+
+                # Odometry error
+                ul = ul * (1.0 + param_odom_left_err)
+                ur = ur * (1.0 + param_odom_right_err)
 
                 # Effective velocity
-                v_lin_eff = (v_left_eff + v_right_eff) / 2.0
-                v_ang_eff = (v_right_eff - v_left_eff) / param_wheel_distance / 2.0
+                v_lin = (ul + ur) / 2.0
+                v_ang = (ur - ul) / param_wheel_distance / 2.0
 
                 # Calculate movement
-                pos_x += v_lin_eff * dt * cos(orientation)
-                pos_y += v_lin_eff * dt * sin(orientation)
-                orientation += v_ang_eff * dt
+                pos_x += v_lin * dt * cos(orientation)
+                pos_y += v_lin * dt * sin(orientation)
+                orientation += v_ang * dt
 
                 # Limit rotation
                 if orientation > pi:
@@ -166,8 +186,8 @@ def do_odom():
             mt = TwistWithCovarianceStamped()
             mt.header.stamp = now
             mt.header.frame_id = base_frame
-            mt.twist.twist.linear.x = v_linear
-            mt.twist.twist.angular.z = v_angular
+            mt.twist.twist.linear.x = v_linear_current
+            mt.twist.twist.angular.z = v_angular_current
             mt.twist.covariance = [
                 0.0,  0.0,  0.0, 0.0, 0.0, 0.0,
                 0.0,  0.0,  0.0, 0.0, 0.0, 0.0,
@@ -185,8 +205,8 @@ def do_odom():
                 q = quaternion_from_euler(0, 0, orientation)
                 mo.pose.pose.orientation = Quaternion(*q)
                 mo.child_frame_id = base_frame
-                mo.twist.twist.linear.x = v_linear
-                mo.twist.twist.angular.z = v_angular
+                mo.twist.twist.linear.x = v_linear_current
+                mo.twist.twist.angular.z = v_angular_current
 
             if param_publish_tf:
 
@@ -223,9 +243,8 @@ if __name__ == '__main__':
     # Starting position
     pos_x0, pos_y0 = 500000.0, 5000000.0
     pos_x, pos_y, orientation = pos_x0, pos_y0, 0.0
-    v_left, v_right = 0.0, 0.0
-    v_left_eff, v_right_eff = 0.0, 0.0
-    v_linear, v_angular = 0.0, 0.0
+    v_linear_target, v_angular_target = 0.0, 0.0
+    v_linear_current, v_angular_current = 0.0, 0.0
 
     map_frame = 'map'
     odom_frame = 'odom'
@@ -244,6 +263,8 @@ if __name__ == '__main__':
     param_odom_left_err = rospy.get_param('~odom_left_err', 0.0)
     param_odom_right_err = rospy.get_param('~odom_right_err', 0.0)
     param_wheel_distance = rospy.get_param('~wheel_distance', 1.0)
+    param_max_acc_linear = rospy.get_param('~max_acc_linear', 10.0)
+    param_max_acc_angular = rospy.get_param('~max_acc_angular', 10.0)
 
     # Transform broadcaster
     if param_publish_tf:

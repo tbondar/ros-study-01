@@ -50,6 +50,10 @@ It uses simple kinematics to calculate the vehicle's pose based on the velocity 
   Emulated error of left wheel speed (default is _0.0_)
 * `~odom_right_err`
   Emulated error of right wheel speed (default is _0.0_)
+* `~max_acc_linear`
+  Maximum linear acceleration (default is _10.0_)
+* `~max_acc_angular`
+  Maximum angular acceleration (default is _10.0_)
 
 The odometry error parameters change the effective velocity that is used to calculate the vehicle's position and orientation:
 ```
