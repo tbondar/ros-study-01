@@ -3,7 +3,8 @@
   <include file="$(find ros_study)/launch/move_base.launch" />
   <include file="$(find ros_study)/launch/map_server.launch" />
   <node name="vehicle_emu" pkg="ros_study" type="vehicle_emu.py" clear_params="true">
-    <param name="publish_tf" value="false"/>
+    <param name="publish_tf_odom2base" value="false"/>
+    <param name="publish_tf_map2odom" value="false"/>
     <param name="publish_odom" value="false"/>
     <param name="gps_err" value="1"/>
     <param name="odom_left_err" value="-0.06"/>

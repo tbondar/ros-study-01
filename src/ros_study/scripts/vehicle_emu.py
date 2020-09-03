@@ -197,19 +197,20 @@ def do_odom():
                 0.0,  0.0,  0.0, 0.0, 0.0, 0.0,
                 0.0,  0.0,  0.0, 0.0, 0.0, 0.0 ]
 
+            q = quaternion_from_euler(0, 0, orientation)
+
             if param_publish_odom:
                 mo = Odometry()
                 mo.header.stamp = now
                 mo.header.frame_id = odom_frame
                 mo.pose.pose.position.x = pos_x - pos_x0
                 mo.pose.pose.position.y = pos_y - pos_y0
-                q = quaternion_from_euler(0, 0, orientation)
                 mo.pose.pose.orientation = Quaternion(*q)
                 mo.child_frame_id = base_frame
                 mo.twist.twist.linear.x = v_linear_current
                 mo.twist.twist.angular.z = v_angular_current
 
-            if param_publish_tf:
+            if param_publish_tf_odom2base:
 
                 t = TransformStamped()
                 t.header.stamp = now
@@ -219,6 +220,8 @@ def do_odom():
                 t.transform.translation.y = pos_y - pos_y0
                 t.transform.rotation = Quaternion(*q)
                 tfbr.sendTransform(t)
+
+            if param_publish_tf_map2odom:
 
                 t = TransformStamped()
                 t.header.stamp = now
@@ -254,7 +257,9 @@ if __name__ == '__main__':
     rospy.init_node('vehicle_emu')
 
     # Get parameters
-    param_publish_tf = rospy.get_param('~publish_tf', True)
+    param_publish_tf_odom2base = rospy.get_param('~publish_tf_odom2base', True)
+    param_publish_tf_map2odom = rospy.get_param('~publish_tf_map2odom', True)
+    param_publish_tf = param_publish_tf_odom2base or param_publish_tf_map2odom
     param_publish_odom = rospy.get_param('~publish_odom', True)
     param_publish_twist = rospy.get_param('~publish_twist', True)
     param_publish_imu = rospy.get_param('~publish_imu', True)
