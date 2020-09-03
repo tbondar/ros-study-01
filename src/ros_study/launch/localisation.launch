@@ -1,46 +1,22 @@
+<!--
+     This launch file provides an example of how to work with GPS data using robot_localization. It runs three nodes:
+       (1) An EKF instance that fuses odometry and IMU data and outputs an odom-frame state estimate
+       (2) A second EKF instance that fuses the same data, but also fuses the transformed GPS data from (3)
+       (3) An instance of navsat_transform_node, which takes in GPS data and produces pose data that has been
+           transformed into your robot's world frame (here, map). The node produces a map-frame state estimate.
+
+       The first EKF instance produces the odom->base_link transform. The second EKF produces the map->odom transform,
+       but requires the odom->base_link transform from the first instance in order to do so. See the
+       params/dual_ekf_navsat_example.yaml file for parameter specification.
+-->
+
 <launch>
-  <node name="ekf_loc_odom" pkg="robot_localization" type="ekf_localization_node">
-    <param name="world_frame" value="odom"/>
-    <param name="two_d_mode" value="true"/>
-    <param name="frequency" value="10"/>
-    <param name="transform_time_offset" value="0.0"/>
-    <param name="twist0" value="/odom/twist"/>
-    <rosparam param="twist0_config">[ false, false, false,
-                                      false, false, false,
-                                       true,  true, false,
-                                      false, false,  true,
-                                      false, false, false]</rosparam>
-    <param name="imu0" value="/imu/data"/>
-    <rosparam param="imu0_config">[false, false, false,
-                                   false, false,  true,
-                                   false, false, false,
-                                   false, false, false,
-                                   false, false, false]</rosparam>
-    <param name="imu0_differential" value="false"/>
-    <remap from="odometry/filtered" to="odom"/>
+  <rosparam command="load" file="$(find ros_study)/config/localisation.yaml" />
+  <node name="ekf_se_odom" pkg="robot_localization" type="ekf_localization_node" clear_params="true"/>
+  <node name="ekf_se_map" pkg="robot_localization" type="ekf_localization_node" clear_params="true">
+    <remap from="odometry/filtered" to="odometry/filtered_map"/>
   </node>
-  <node name="ekf_loc_map" pkg="robot_localization" type="ekf_localization_node">
-    <param name="world_frame" value="map"/>
-    <param name="two_d_mode" value="true"/>
-    <param name="frequency" value="10"/>
-    <param name="transform_time_offset" value="0.01"/>
-    <param name="odom0" value="/odometry/gps"/>
-    <rosparam param="odom0_config">[ true,  true, false,
-                                    false, false, false,
-                                    false, false, false,
-                                    false, false, false,
-                                    false, false, false]</rosparam>
-    <param name="odom0_differential" value="false"/>
-    <param name="imu0" value="/imu/data"/>
-    <rosparam param="imu0_config">[false, false, false,
-                                   false, false,  true,
-                                   false, false, false,
-                                   false, false, false,
-                                   false, false, false]</rosparam>
-    <param name="imu0_differential" value="false"/>
-  </node>
-  <node name="navsat_transform" pkg="robot_localization" type="navsat_transform_node">
-    <param name="magnetic_declination_radians" value="0"/>
-    <param name="zero_altitude" value="true"/>
+  <node name="navsat_transform" pkg="robot_localization" type="navsat_transform_node" clear_params="true">
+    <remap from="odometry/filtered" to="odometry/filtered_map"/>
   </node>
 </launch>

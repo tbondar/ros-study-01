@@ -4,12 +4,12 @@
     <param name="publish_tf_odom2base" value="false"/>
     <param name="publish_tf_map2odom" value="false"/>
     <param name="publish_odom" value="false"/>
-    <param name="gps_err" value="0"/>
-    <param name="odom_left_err" value="0.0"/>
-    <param name="odom_right_err" value="0.0"/>
+    <param name="gps_err" value="1"/>
+    <param name="odom_left_err" value="-0.06"/>
+    <param name="odom_right_err" value="-0.04"/>
     <param name="max_acc_linear" value="10.0"/>
     <param name="max_acc_angular" value="10.0"/>
-    <param name="path_length" value="3"/>
+    <param name="path_length" value="10"/>
     <remap from="twist" to="odom/twist"/>
     <remap from="fix" to="gps/fix"/>
     <remap from="imu" to="imu/data"/>

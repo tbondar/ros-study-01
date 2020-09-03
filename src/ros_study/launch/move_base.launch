@@ -6,5 +6,6 @@
     <rosparam file="$(find ros_study)/config/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find ros_study)/config/dwa_planner_params.yaml" command="load" />
     <rosparam file="$(find ros_study)/config/global_planner_params.yaml" command="load" />
+    <remap from="odom" to="odometry/filtered"/>
   </node>
 </launch>

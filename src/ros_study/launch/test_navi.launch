@@ -6,5 +6,6 @@
     <param name="publish_imu" value="false"/>
     <param name="publish_path" value="false"/>
     <param name="publish_fix" value="false"/>
+    <remap from="odom" to="odometry/filtered"/>
   </node>
 </launch>
