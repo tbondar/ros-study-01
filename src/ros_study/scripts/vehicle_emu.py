@@ -142,6 +142,7 @@ def do_fix():
             n.pose.orientation = Quaternion(*q)
 
             path.poses.append(n)
+            path.poses = path.poses[-param_path_length:]
             path.header.stamp = now
 
         if param_publish_fix:
@@ -259,6 +260,7 @@ if __name__ == '__main__':
     param_publish_imu = rospy.get_param('~publish_imu', True)
     param_publish_path = rospy.get_param('~publish_path', True)
     param_publish_fix = rospy.get_param('~publish_fix', True)
+    param_path_length = rospy.get_param('~path_length', 10)
     param_gps_err = rospy.get_param('~gps_err', 0)
     param_odom_left_err = rospy.get_param('~odom_left_err', 0.0)
     param_odom_right_err = rospy.get_param('~odom_right_err', 0.0)

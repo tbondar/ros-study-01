@@ -8,6 +8,7 @@
     <param name="odom_right_err" value="0.0"/>
     <param name="max_acc_linear" value="10.0"/>
     <param name="max_acc_angular" value="10.0"/>
+    <param name="path_length" value="3"/>
     <remap from="twist" to="odom/twist"/>
     <remap from="fix" to="gps/fix"/>
     <remap from="imu" to="imu/data"/>
